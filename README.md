@@ -24,6 +24,8 @@ Run this program and LMO EDUCATION web video player, and press [F1]
 
 **※ LMO EDUCATION web video player should be located on the main monitor, and other application's window should not cover it.**
 
+**※ images directory should be located in same directory of .exe file**
+
 ### Hotkey
 
 [**F1**] : Start to method, [**F2**] : Start to test, [**F3**] : Exit program
