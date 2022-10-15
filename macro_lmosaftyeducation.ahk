@@ -7,23 +7,39 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 
-Global targetwin := "학습하기 - Chrome"
-Global fix_next_button_x = 1005, fix_next_button_y = 786
-
 main() {
 	loop
 	{
-		ImageSearch, next_button_x, next_button_y, 0, 0, A_ScreenWidth, A_ScreenHeight, *30 images/next_button.png
-
-		ImageSearch, OutputVarX, OutputVarY, 0, 0, A_ScreenWidth, A_ScreenHeight, *30 images/next_page.png
-		if (ErrorLevel = 0) {
-			Sleep 500
-			ControlClick, % "X" fix_next_button_x " Y" fix_next_button_y, % targetwin
-			Sleep 500
-			ControlClick, % "X" fix_next_button_x " Y" fix_next_button_y + 50, % targetwin
-		}
+		detect_and_click("학습하기 - Chrome", "images/next_page_20.png", "images/next_button_20.png")
+		detect_and_click("학습하기 - Chrome", "images/next_page_22.png", "images/next_button_22.png")
+		detect_and_click("학습하기 - Chrome", "images/next_page_24.png", "images/next_button_24.png")
+		detect_and_click("학습하기 - Chrome", "images/next_page_26.png", "images/next_button_26.png")
 		Sleep 500
 	}
+}
+
+image_search(img, conf_threshold=30) {
+	ImageSearch, x, y, 0, 0, A_ScreenWidth, A_ScreenHeight, % "*" conf_threshold " " img
+	if (ErrorLevel = 0) {
+		Return [x, y]
+	}
+	Return False
+}
+
+detect_and_click(win_name, img_state, img_btn) {
+	result_state := image_search(img_state)
+	if not (result_state = False) {
+		result_btn := image_search(img_btn, 10)
+		if not (result_btn = False) {
+			control_click_win(win_name, result_btn[1], result_btn[2])
+			control_click_win(win_name, result_btn[1], result_btn[2] + 50)
+		}
+	}
+}
+
+control_click_win(win_name, x_abs, y_abs) {
+	WinGetPos, X, Y, W, H, % win_name
+	ControlClick, % "X" x_abs - X " Y" y_abs - Y, % win_name
 }
 
 F1::
@@ -31,11 +47,8 @@ F1::
 	return
 
 F2::
-	ImageSearch, OutputVarX, OutputVarY, 0, 0, A_ScreenWidth, A_ScreenHeight, *30 images/next_page.png
-	mousemove, % OutputVarX, % OutputVarY
-	Sleep 1000
-	ImageSearch, next_button_x, next_button_y, 0, 0, A_ScreenWidth * 2, A_ScreenHeight, *30 images/next_button.png
-	mousemove, % next_button_x, % next_button_y
+	result_test_btn := image_search("images/next_button_22.png", 10)
+	mousemove, % result_test_btn[1], % result_test_btn[2]
 	return
 
 F3::Exitapp
